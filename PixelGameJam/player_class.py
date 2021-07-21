@@ -6,14 +6,28 @@ def debug(state=False):
 
 
 class Player:
-    def __init__(self, screen, location=(0, 0), size=(10, 10), color=(0, 0, 0)):
+    def __init__(self, screen, location=[0, 0], size=(10, 10), color=(0, 0, 0)):
         self.screen = screen
         self.player_position = location
         self.player_size = size
         self.player_color = color
+        self.death_color = (50, 50, 50)
+        self.max_hp = 200
+        self.player_health = 100
+        print(f"Player Health = {self.max_hp}/{self.player_health}")
+
+    def set_player_position(self, location):
+        self.player_position = location
+
+    def get_player_position(self):
+        return self.player_position
 
     def draw_player(self):
-        return pygame.draw.rect(self.screen, self.player_color, (self.player_position, self.player_size))
+        if self.player_health <= 0:
+            color = self.death_color
+        else:
+            color = self.player_color
+        return pygame.draw.rect(self.screen, color, (self.player_position, self.player_size))
 
     @staticmethod
     def get_input_direction():
@@ -63,7 +77,11 @@ class Player:
             return total_movement
 
     def update_player_position(self, step=1):
-        self.player_position = self.add_tuples(self.player_position, self.get_input_direction())
+        if self.player_health > self.max_hp:
+            self.player_health = self.max_hp
+        if self.player_health > 0:
+            self.player_position = self.add_tuples(self.player_position, self.get_input_direction())
+
 
     @staticmethod
     def add_tuples(tuple_a, tuple_b) -> tuple:
