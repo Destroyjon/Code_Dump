@@ -2,46 +2,89 @@ import pygame
 from player_class import Player
 
 
-class Button:
-    def __init__(self, screen, position, size=(100, 50), color=(0, 0, 0)):
-        pygame.font.init()
-        self.screen = screen
-        self.position = position
-        self.size = size
+class Button(pygame.sprite.Sprite):
+    def __init__(self, x, y, width, height, color):
+        super().__init__()
+        self.x = x
+        self.y = y
+        self.x_point = x-width/2
+        self.y_point = y-height/2
+        self.width = width
+        self.height = height
         self.color = color
+        self.image = pygame.Surface([width, height])
+        self.image.fill(self.color)
+        self.rect = self.image.get_rect()
+        self.rect.center = [x, y]
+        self.button_function = None
+        self.pressed = 0
 
-    def set_button_size(self, size):
-        self.size = size
+    def __repr__(self):
+        return f"{self.rect.center}, {self.rect.size}, {self.color}"
 
-    def get_button_size(self):
-        return self.size
+    def __set_name__(self, name):
+        self.__name__ = name
 
-    def draw_button(self):
-        pygame.draw.rect(self.screen, self.color, (self.position, self.size))
+    def reset(self, reset_size=False):
+        if reset_size:
+            self.image = pygame.Surface([self.width, self.height])
+        self.image.fill(self.color)
+        self.rect = self.image.get_rect()
+        self.rect.center = [self.x, self.y]
 
-    def on_mouse_hover(self):
+    def on_hover(self):
         if self.is_mouse_over():
-            return True
+            self.image = pygame.Surface([self.width + 5, self.height + 5])
 
-    def on_mouse_click(self):
-        if self.is_mouse_over() and self.is_mouse_clicked(1):
-            return True
+    def on_click(self):
+        if self.is_pressed():
+            self.image = pygame.Surface([self.width + 10, self.height + 10])
+            if self.pressed == 0:
+                self.pressed = 1
+                return self.get_button_action()
+        else:
+            self.pressed = 0
 
     def is_mouse_over(self):
         mouse_pos = pygame.mouse.get_pos()
-        if self.position[0] < mouse_pos[0] < self.position[0] + self.size[0] and self.position[1] < mouse_pos[1] < \
-                self.position[1] + self.size[1]:
+        if self.x_point < mouse_pos[0] < self.x_point + self.width and self.y_point < mouse_pos[1] < \
+                self.y_point + self.height:
             return True
 
-    @staticmethod
-    def is_mouse_clicked(button):
-        mouse_buttons = pygame.mouse.get_pressed(3)
-        if button == 1:
-            return mouse_buttons[0]
-        elif button == 2:
-            return mouse_buttons[1]
+    def is_pressed(self):
+        if self.is_mouse_over():
+            if pygame.mouse.get_pressed(3)[0]:
+                return True
+
+    def is_button_usable(self):
+        if pygame.mouse.get_pressed(3)[0]:
+            self.pressed = 1
         else:
-            return mouse_buttons[3]
+            self.pressed = 0
+        return self.is_pressed()
+
+
+    def set_button_action(self, function):
+        self.button_function = function
+
+    def get_button_action(self):
+        if self.button_function:
+            self.button_function()
+        else:
+            return None
+
+    def update(self):
+        if self.is_mouse_over():
+            self.on_hover()
+            self.on_click()
+            self.reset(False)
+        else:
+            self.reset(True)
+
+
+class Skill_Button(Button):
+    def __init__(self, x, y, width, height, color):
+        super().__init__(x, y, width, height, color)
 
 
 class Health_Bar:
@@ -125,13 +168,17 @@ class Status_Bar(pygame.sprite.Sprite):
         self.bar_group.draw(screen)
 
     def update_pos(self, parent=None, offset_x=-50, offset_y=35):
-        if parent:
-            self.off_width = (self.max_width*(parent.player_health/parent.max_hp))
-            self.foreground.image = pygame.Surface([self.off_width, self.off_height])
-            self.foreground.image.fill(self.hp_color)
-
         for sprite in self.bar_group:
             if parent:
                 sprite.rect.center = [parent.player_position[0]-offset_x, parent.player_position[1]-offset_y]
             else:
                 sprite.rect.center = [self.pos_x, self.pos_y]
+
+    def update_parent_data(self, parent):
+        self.off_width = (self.max_width*(parent.player_health/parent.max_hp))
+        self.foreground.image = pygame.Surface([self.off_width, self.off_height])
+        self.foreground.image.fill(self.hp_color)
+
+    def set_pos(self, x, y):
+        self.pos_x = x
+        self.pos_y = y

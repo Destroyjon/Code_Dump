@@ -6,7 +6,7 @@ def debug(state=False):
 
 
 class Player:
-    def __init__(self, screen, location=[0, 0], size=(10, 10), color=(0, 0, 0)):
+    def __init__(self, screen, location=(0, 0), size=(10, 10), color=(100, 0, 0)):
         self.screen = screen
         self.player_position = location
         self.player_size = size
