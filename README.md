@@ -27,15 +27,17 @@ Old_Code_Stuff:
                             [0, 0, 0, 1, 0],
                             [0, 0, 0, 0, 0]
   
-  The rest of the files are just for a simple physics engine but its old and outdated.
+  The rest of the files from Old_Code_Stuff are just for a simple physics engine but its old and outdated.
   
   
 PixelGameJam:
+
   I joined a game jam in an attempt to get me to focus on a core project. I ended up focusing more on trying to figure out how to code to make things faster,
   and easier that I ran out of time leaving a very lack luster "Game". This has led me to wanting to learn and understand Game Engines at their core.
   
   
 Test_Stuff:
+
   This is a combination of random ideas that I wanted to test and try for example. 
   
     Trying to make better sense of debugging, and writing better and more efficient code.
