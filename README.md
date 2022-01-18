@@ -16,6 +16,7 @@ Old_Code_Stuff:
     Using a simple method to create a grid based world map. (4-21)
     Trying to solve a problem from (CodeWars). /another place that I tried to get the core mechanics of Conways game of Life from Random_Code.
       Essentially make this do this.
+      
       [0, 1, 1],            [0, 0, 0, 0, 0],
       [1, 0, 0], -------->  [0, 0, 1, 1, 0],
       [0, 0, 1]             [0, 1, 0, 0, 0],
